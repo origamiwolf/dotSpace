@@ -1,0 +1,23 @@
+var picfiles = [
+  {
+    "ID": "1",
+    "Title": "The Persistence of Memory",
+    "Artist": "Salvador Dali",
+    "Year": "1931",
+    "Source": "WikiArt"
+  },
+  {
+    "ID": "2",
+    "Title": "Still Life - Vase with Fifteen Sunflowers",
+    "Artist": "Vincent Van Gogh",
+    "Year": "1888",
+    "Source": "WikiArt"
+  },
+  {
+    "ID": "3",
+    "Title": "The Great Wave off Kanagawa",
+    "Artist": "Katsushika Hokusai",
+    "Year": "1831",
+    "Source": "WikiArt"
+  }  
+]

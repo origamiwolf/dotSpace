@@ -1,0 +1,57 @@
+#info {
+  margin: 0;
+  padding: 10px 0px 10px 0px;
+  width: 100%;
+  text-align:center;
+  color: white;
+  background-color: black;
+}
+
+body { 
+  margin: 0; 
+  height: 100%;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#a_title {
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 200%;
+}
+
+#sidebar {
+	float: left;
+	width: 20%;
+  height: 800px;
+	font-size: 100%;
+	padding: 0;
+  margin: 0;
+  background-color: black;
+  color: white;
+}
+
+#mainViz {
+  overflow: hidden;
+  float: right;
+  width: 80%;
+  padding: 0;
+  margin: 0;
+}
+
+#sidebar #pic_thumb {
+  padding: 10px 10px 10px 10px;
+}
+
+#sidebar #pic_info {
+  padding: 0px 10px 10px 10px;
+}
+
+#thumb {
+  max-height: 100%;
+  max-width: 100%;
+}

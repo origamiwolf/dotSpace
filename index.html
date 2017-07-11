@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>dotSpace</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+	</head>
+	<body>
+    <div id="info"><b><a id="a_title" onclick="about()">dotSpace</a></b><br>
+    <a onclick="switchPic(1)">Memory</a> |
+    <a onclick="switchPic(2)">Sunflowers</a> |
+    <a onclick="switchPic(3)">Wave</a>
+    <br>
+    Select a painting.  Left mouse to orbit, right mouse to pan, mouse scroll to zoom.  'R' to reset view.
+    </div>
+    <div id="sidebar"><div id="pic_thumb"></div><div id="pic_info"></div></div>
+    
+		<script type="text/javascript" src="js/three.js"></script>
+		<script type="text/javascript" src="js/Detector.js"></script>
+    <script type="text/javascript" src="js/TrackballControls.js"></script>
+		<script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="data/images.json"></script>
+		<script>
+			var camera, controls, scene, renderer;				
+      var particles, pMaterial, particleSystem;
+      var c_x = 181;
+      var c_y = -200;
+      var c_z = 212;   
+
+      if (Detector.webgl) {
+        init_scene();
+      } else {
+        var warning = Detector.getWebGLErrorMessage();
+        document.getElementById("mainViz").appendChild(warning);
+      }
+      
+      about();
+      animate();
+      document.addEventListener( 'keydown', onKeyDown, false );
+      
+      function runViz(filename) {
+        init_geoms();
+        d3.csv(filename, function(data) { 				
+          genCloud(data);
+          });
+      }
+			
+			function genCloud(df,jitter=true) {
+				var particleCount = df.length;
+				for (var p=0;p<df.length;p++) {
+					pRed = (jitter ? Math.round(2*Math.random() - 1) : 0) + parseInt(df[p].color.substr(0,2),16);
+					pGreen = (jitter ? Math.round(2*Math.random() - 1) : 0) + parseInt(df[p].color.substr(2,2),16);
+					pBlue = (jitter ? Math.round(2*Math.random() - 1) : 0) + parseInt(df[p].color.substr(4,2),16);
+
+					var particle = new THREE.Vector3(pRed, pGreen, pBlue);
+					particles.vertices.push(particle);
+					particles.colors.push(new THREE.Color("#"+df[p].color));
+          particle = null;
+				}
+				particleSystem.sortParticles = true;
+				particles.center();
+        scene.add(particleSystem);
+			}
+			
+			function animate() {
+				requestAnimationFrame(animate);		
+        render();
+        controls.update();
+			}
+			      
+      function init_scene() {
+        container = document.createElement('div');
+        container.setAttribute("Id","mainViz");
+        document.body.appendChild(container);
+
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );        
+        camera.position.set(c_x,c_y,c_z);
+        camera.lookAt(new THREE.Vector3(0,0,0));
+        
+        controls = new THREE.TrackballControls(camera);
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.noZoom = false;
+        controls.noPan = false;
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+        controls.keys = [65, 83, 68];
+        controls.addEventListener('change', render);
+        
+        scene = new THREE.Scene();
+        
+        renderer = new THREE.WebGLRenderer(); 
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize( 0.8*window.innerWidth, window.innerHeight );
+        container.appendChild( renderer.domElement );
+      }
+      
+      function init_geoms() {
+        scene.remove(particleSystem);
+        // cleanup first
+        if (particles) particles.dispose();
+        if (pMaterial) pMaterial.dispose();
+        if (pTexture) pTexture.dispose();
+        particleSystem = null;
+        
+        var pTexture = new THREE.TextureLoader().load("images/particleB.png");
+        
+        particles = new THREE.Geometry();
+        pMaterial = new THREE.PointsMaterial({
+          vertexColors: THREE.VertexColors,
+          size: 1,
+          map: pTexture,
+          blending: THREE.AdditiveBlending,
+          transparent: true
+        });
+        particleSystem = new THREE.Points(particles,pMaterial);
+      }
+      
+      function render() {
+        renderer.render(scene, camera);
+      }
+      
+      function switchPic(picNum) {
+        if ((picNum > picfiles.length) || (picNum < 1)) {
+          picNum = 1;
+        }
+        show_info(picNum);
+        runViz("data/" + picfiles[picNum-1].ID + ".csv");
+      }
+      
+      function show_info(picNum) {
+        var pic_info;
+        pic_info = '<i>' + picfiles[picNum-1].Title + '</i><br>';
+        pic_info = pic_info + picfiles[picNum-1].Artist + '<br>';
+        pic_info = pic_info + picfiles[picNum-1].Year + '<br>';
+        pic_info = pic_info + 'Source: ' + picfiles[picNum-1].Source;
+        document.getElementById("pic_info").innerHTML = pic_info;
+        document.getElementById("pic_thumb").innerHTML = '<img id="thumb" src=data/' + picfiles[picNum-1].ID + '.jpg>';
+      }
+      
+      function about() {
+        var about_info;
+        about_info = 'In this visualisation, the RGB colour information of each pixel in a painting is mapped onto a'; 
+        about_info = about_info + ' three dimensional Cartesian space, with the axes representing the red, blue and green channels.';
+        about_info = about_info + '<br><br>';
+        about_info = about_info + 'By no means does this represent the true colourspace of the original painting.  Colour artefacts ';
+        about_info = about_info + 'will most certainly arise from the transcription of a realspace painting into a digital format, ';
+        about_info = about_info + 'introduced by the type of photography equipment used, the imaging conditions and the digital storage format.';
+        about_info = about_info + '<br><br>';
+        about_info = about_info + 'Not only that, but physical changes in pigments, varnishes and media will over time result in colour drifts from the original as well.';
+        document.getElementById("pic_info").innerHTML = about_info;
+        document.getElementById("pic_thumb").innerHTML = '';
+      }
+      
+      function onKeyDown(event) {
+        if (event.keyCode == 82) {
+          if (camera) {
+            camera.position.set(c_x,c_y,c_z);
+            camera.lookAt(new THREE.Vector3(0,0,0));        
+          }
+        }
+      }
+      
+		</script>
+	</body>
+</html>
