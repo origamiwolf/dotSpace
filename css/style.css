@@ -57,7 +57,28 @@ a {
   max-width: 100%;
 }
 
-#splash {
-  height: 480px;
+#splash_div {
+  height: 400px;
   width: 100%;
+}
+
+#splash {
+  height: 400px;
+  width: 680px;
+  display: block;
+  margin: auto auto;
+}
+
+#footer {
+  padding: 20px 0px 0px 0px;
+  overflow: hidden;  
+  height:100px;
+  width: 100%;
+  color: white;
+  background-color: black;
+  text-align: center;
+}
+
+#footer a:visited {
+  color: white;
 }
