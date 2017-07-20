@@ -56,3 +56,8 @@ a {
   max-height: 100%;
   max-width: 100%;
 }
+
+#splash {
+  height: 480px;
+  width: 100%;
+}
