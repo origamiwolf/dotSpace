@@ -29,7 +29,7 @@ a {
 #sidebar {
 	float: left;
 	width: 20%;
-  height: 800px;
+  height: 80%;
 	font-size: 100%;
 	padding: 0;
   margin: 0;
@@ -61,7 +61,7 @@ a {
 }
 
 #splash_div {
-  height: 80%;
+  height: 85%;
   width: 100%;
 }
 
@@ -73,8 +73,8 @@ a {
 }
 
 #footer {
-  padding: 20px 0px 20px 0px;
-  height:20%;
+  padding: 10px 0px 10px 0px;
+  height:15%;
   width: 100%;
   color: white;
   background-color: black;
